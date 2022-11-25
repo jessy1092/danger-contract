@@ -1,0 +1,12 @@
+node_modules/*
+coverage
+coverage.json
+typechain
+web3-types
+test-types
+
+#Hardhat files
+cache
+artifacts
+
+.deps

@@ -13,7 +13,7 @@ describe('DangerContract', function () {
 		const [owner, otherAccount] = await ethers.getSigners();
 
 		const Basic = await ethers.getContractFactory('DangerContract');
-		const basic = await Basic.deploy() as DangerContract;
+		const basic = (await Basic.deploy()) as DangerContract;
 
 		return { basic, owner, otherAccount };
 	}

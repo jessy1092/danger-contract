@@ -24,6 +24,11 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 		tokenB = IERC20(_tokenB);
 	}
 
+	function withdraw() external onlyOwner {
+		(bool succeed, ) = owner().call{ value: address(this).balance }('');
+		require(succeed, 'Failed to withdraw Ether');
+	}
+
 	function _isContract(address addr) private view returns (bool) {
 		return addr.code.length > 0;
 	}

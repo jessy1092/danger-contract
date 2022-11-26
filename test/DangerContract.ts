@@ -118,12 +118,15 @@ describe('DangerContract Spec', () => {
 				const amountA = parseUnits('42', tokenADecimals);
 				const amountB = parseUnits('420', tokenBDecimals);
 				const liquidity = sqrt(amountA.mul(amountB));
+				const fee = liquidity.mul(3).div(1000);
+				const userLiquidity = liquidity.sub(fee);
 
 				await expect(dangerContract.connect(maker).addLiquidity(amountA, amountB))
 					.to.changeTokenBalances(tokenA, [maker, dangerContract], [amountA.mul(-1), amountA])
 					.to.changeTokenBalances(tokenB, [maker, dangerContract], [amountB.mul(-1), amountB])
+					.to.changeTokenBalances(dangerContract, [maker, dangerContract], [userLiquidity, fee])
 					.to.emit(dangerContract, 'AddLiquidity')
-					.withArgs(maker.address, amountA, amountB, liquidity);
+					.withArgs(maker.address, amountA, amountB, userLiquidity);
 
 				const [reserveA, reserveB] = await dangerContract.getReserves();
 
@@ -171,13 +174,16 @@ describe('DangerContract Spec', () => {
 				const amountA = parseUnits('90', tokenADecimals);
 				const amountB = parseUnits('40', tokenBDecimals); // amountA / reserveA * reserveB = 90 / 45 * 20 = 40
 				const liquidity = sqrt(amountA.mul(amountB));
+				const fee = liquidity.mul(3).div(1000);
+				const userLiquidity = liquidity.sub(fee);
 
 				// check event and balanceChanged
 				await expect(dangerContract.connect(maker).addLiquidity(amountA, amountB))
 					.to.changeTokenBalances(tokenA, [maker, dangerContract], [amountA.mul(-1), amountA])
 					.to.changeTokenBalances(tokenB, [maker, dangerContract], [amountB.mul(-1), amountB])
+					.to.changeTokenBalances(dangerContract, [maker, dangerContract], [userLiquidity, fee])
 					.to.emit(dangerContract, 'AddLiquidity')
-					.withArgs(maker.address, amountA, amountB, liquidity);
+					.withArgs(maker.address, amountA, amountB, userLiquidity);
 
 				const [reserveA, reserveB] = await dangerContract.getReserves();
 
@@ -193,6 +199,8 @@ describe('DangerContract Spec', () => {
 					.mul(reserveBAfterFirstAddLiquidity)
 					.div(reserveAAfterFirstAddLiquidity);
 				const liquidity = sqrt(amountA.mul(actualAmountB));
+				const fee = liquidity.mul(3).div(1000);
+				const userLiquidity = liquidity.sub(fee);
 
 				// check event and balanceChanged
 				await expect(dangerContract.connect(maker).addLiquidity(amountA, amountB))
@@ -202,8 +210,9 @@ describe('DangerContract Spec', () => {
 						[maker, dangerContract],
 						[actualAmountB.mul(-1), actualAmountB],
 					)
+					.to.changeTokenBalances(dangerContract, [maker, dangerContract], [userLiquidity, fee])
 					.to.emit(dangerContract, 'AddLiquidity')
-					.withArgs(maker.address, amountA, actualAmountB, liquidity);
+					.withArgs(maker.address, amountA, actualAmountB, userLiquidity);
 
 				const [reserveA, reserveB] = await dangerContract.getReserves();
 
@@ -219,6 +228,8 @@ describe('DangerContract Spec', () => {
 					.mul(reserveAAfterFirstAddLiquidity)
 					.div(reserveBAfterFirstAddLiquidity);
 				const liquidity = sqrt(actualAmountA.mul(amountB));
+				const fee = liquidity.mul(3).div(1000);
+				const userLiquidity = liquidity.sub(fee);
 
 				// check event and balanceChanged
 				await expect(dangerContract.connect(maker).addLiquidity(amountA, amountB))
@@ -228,8 +239,9 @@ describe('DangerContract Spec', () => {
 						[actualAmountA.mul(-1), actualAmountA],
 					)
 					.to.changeTokenBalances(tokenB, [maker, dangerContract], [amountB.mul(-1), amountB])
+					.to.changeTokenBalances(dangerContract, [maker, dangerContract], [userLiquidity, fee])
 					.to.emit(dangerContract, 'AddLiquidity')
-					.withArgs(maker.address, actualAmountA, amountB, liquidity);
+					.withArgs(maker.address, actualAmountA, amountB, userLiquidity);
 
 				const [reserveA, reserveB] = await dangerContract.getReserves();
 
@@ -254,13 +266,16 @@ describe('DangerContract Spec', () => {
 				const liquidityA = amountA.mul(totalSupply).div(reserveAAfterSwap); // 18 * 30 / 90 = 6
 				const liquidityB = amountB.mul(totalSupply).div(reserveBAfterSwap); // 2 * 30 / 10 = 6
 				const liquidity = liquidityA.lt(liquidityB) ? liquidityA : liquidityB; // 6
+				const fee = liquidity.mul(3).div(1000);
+				const userLiquidity = liquidity.sub(fee);
+
 				// check event and balanceChanged
 				await expect(dangerContract.connect(maker).addLiquidity(amountA, amountB))
 					.to.changeTokenBalances(tokenA, [maker, dangerContract], [amountA.mul(-1), amountA])
 					.to.changeTokenBalances(tokenB, [maker, dangerContract], [amountB.mul(-1), amountB])
-					.to.changeTokenBalance(dangerContract, maker, liquidity)
+					.to.changeTokenBalances(dangerContract, [maker, dangerContract], [userLiquidity, fee])
 					.to.emit(dangerContract, 'AddLiquidity')
-					.withArgs(maker.address, amountA, amountB, liquidity);
+					.withArgs(maker.address, amountA, amountB, userLiquidity);
 
 				const [reserveA, reserveB] = await dangerContract.getReserves();
 
@@ -465,11 +480,13 @@ describe('DangerContract Spec', () => {
 			const amountA = parseUnits('100', tokenADecimals);
 			const amountB = parseUnits('100', tokenBDecimals);
 			const liquidity = sqrt(amountA.mul(amountB));
+			const fee = liquidity.mul(3).div(1000);
+			const userLiquidity = liquidity.sub(fee);
 
 			await expect(dangerContract.connect(maker).addLiquidity(amountA, amountB))
-				.to.changeTokenBalances(dangerContract, [maker], [liquidity])
+				.to.changeTokenBalances(dangerContract, [maker, dangerContract], [userLiquidity, fee])
 				.to.emit(dangerContract, 'Transfer')
-				.withArgs(ethers.constants.AddressZero, maker.address, liquidity);
+				.withArgs(ethers.constants.AddressZero, maker.address, userLiquidity);
 		});
 
 		it('should be able to repay lp token after removing liquidity', async () => {
@@ -500,6 +517,19 @@ describe('DangerContract Spec', () => {
 			await expect(dangerContract.connect(maker).approve(taker.address, lpTokenAmount))
 				.to.emit(dangerContract, 'Approval')
 				.withArgs(maker.address, taker.address, lpTokenAmount);
+		});
+
+		it('should be able to withdraw fee lp token by owner', async () => {
+			const lpTokenAmount = await dangerContract.balanceOf(dangerContract.address);
+
+			await expect(dangerContract.connect(owner).withdrawFee())
+				.to.changeTokenBalances(
+					dangerContract,
+					[dangerContract, owner],
+					[lpTokenAmount.mul(-1), lpTokenAmount],
+				)
+				.to.emit(dangerContract, 'Transfer')
+				.withArgs(dangerContract.address, owner.address, lpTokenAmount);
 		});
 	});
 

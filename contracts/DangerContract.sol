@@ -106,15 +106,19 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 
 		_updateReserves();
 
-		_mint(sender, liquidity);
+		uint256 feeLiquidity = (liquidity * 3) / 1000;
+		uint256 userLiquidity = liquidity - feeLiquidity;
 
-		emit AddLiquidity(sender, actualAmountA, actualAmountB, liquidity);
+		_mint(sender, userLiquidity);
+		_mint(address(this), feeLiquidity);
 
-		return (actualAmountA, actualAmountB, liquidity);
+		emit AddLiquidity(sender, actualAmountA, actualAmountB, userLiquidity);
+
+		return (actualAmountA, actualAmountB, userLiquidity);
 	}
 
 	/// @inheritdoc ISimpleSwap
-	function removeLiquidity(uint256 liquidity) external returns (uint256, uint256) {
+	function removeLiquidity(uint256 liquidity) public returns (uint256, uint256) {
 		require(liquidity > 0, 'SimpleSwap: INSUFFICIENT_LIQUIDITY_BURNED');
 
 		address sender = _msgSender();
@@ -133,6 +137,14 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 		emit RemoveLiquidity(sender, amountA, amountB, liquidity);
 
 		return (amountA, amountB);
+	}
+
+	function withdrawFee() external onlyOwner returns (uint256) {
+		uint256 feeLiquidity = balanceOf(address(this));
+
+		_transfer(address(this), msg.sender, feeLiquidity);
+
+		return feeLiquidity;
 	}
 
 	function _updateReserves() private {

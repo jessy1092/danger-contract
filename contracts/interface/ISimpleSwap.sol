@@ -42,7 +42,8 @@ interface ISimpleSwap is ISimpleSwapEvent {
 	function swap(
 		address tokenIn,
 		address tokenOut,
-		uint256 amountIn
+		uint256 amountIn,
+		bytes calldata data
 	) external returns (uint256 amountOut);
 
 	/// @notice Add liquidity to the pool
@@ -77,4 +78,8 @@ interface ISimpleSwap is ISimpleSwapEvent {
 	/// @notice Get the address of tokenB
 	/// @return tokenB The address of tokenB
 	function getTokenB() external view returns (address tokenB);
+}
+
+interface ISimpleSwapCallee {
+    function simpleswapCall(address sender, uint amount, bytes calldata data) external payable;
 }

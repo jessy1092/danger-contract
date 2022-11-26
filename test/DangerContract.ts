@@ -255,7 +255,7 @@ describe('DangerContract Spec', () => {
 				const tokenOut = tokenB.address;
 				const amountIn = parseUnits('45', tokenADecimals);
 
-				await dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn);
+				await dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x');
 
 				const [reserveAAfterSwap, reserveBAfterSwap] = await dangerContract.getReserves();
 
@@ -298,7 +298,7 @@ describe('DangerContract Spec', () => {
 			const tokenOut = tokenB.address;
 			const amountIn = parseUnits('10', tokenADecimals);
 
-			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn)).to.revertedWith(
+			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x')).to.revertedWith(
 				'SimpleSwap: INVALID_TOKEN_IN',
 			);
 		});
@@ -308,7 +308,7 @@ describe('DangerContract Spec', () => {
 			const tokenOut = ethers.constants.AddressZero;
 			const amountIn = parseUnits('10', tokenADecimals);
 
-			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn)).to.revertedWith(
+			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x')).to.revertedWith(
 				'SimpleSwap: INVALID_TOKEN_OUT',
 			);
 		});
@@ -318,7 +318,7 @@ describe('DangerContract Spec', () => {
 			const tokenOut = tokenA.address;
 			const amountIn = parseUnits('10', tokenADecimals);
 
-			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn)).to.revertedWith(
+			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x')).to.revertedWith(
 				'SimpleSwap: IDENTICAL_ADDRESS',
 			);
 		});
@@ -328,7 +328,7 @@ describe('DangerContract Spec', () => {
 			const tokenOut = tokenB.address;
 			const amountIn = parseUnits('0', tokenADecimals);
 
-			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn)).to.revertedWith(
+			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x')).to.revertedWith(
 				'SimpleSwap: INSUFFICIENT_INPUT_AMOUNT',
 			);
 		});
@@ -339,7 +339,7 @@ describe('DangerContract Spec', () => {
 			const amountIn = 1;
 
 			// Amount can not be zero
-			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn)).to.revertedWith(
+			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x')).to.revertedWith(
 				'SimpleSwap: INSUFFICIENT_OUTPUT_AMOUNT',
 			);
 		});
@@ -350,7 +350,7 @@ describe('DangerContract Spec', () => {
 			const amountIn = parseUnits('100', tokenADecimals);
 			const amountOut = parseUnits('50', tokenBDecimals); // 100 * 100 / (100 + 100) = 50
 
-			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn))
+			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x'))
 				.to.changeTokenBalances(tokenA, [taker, dangerContract], [amountIn.mul(-1), amountIn])
 				.to.changeTokenBalances(tokenB, [taker, dangerContract], [amountOut, amountOut.mul(-1)])
 				.emit(dangerContract, 'Swap')
@@ -367,7 +367,7 @@ describe('DangerContract Spec', () => {
 			const amountIn = parseUnits('100', tokenADecimals);
 			const amountOut = parseUnits('50', tokenBDecimals); // 100 * 100 / (100 + 100) = 50
 
-			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn))
+			await expect(dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x'))
 				.to.changeTokenBalances(tokenA, [taker, dangerContract], [amountOut, amountOut.mul(-1)])
 				.to.changeTokenBalances(tokenB, [taker, dangerContract], [amountIn.mul(-1), amountIn])
 				.emit(dangerContract, 'Swap')
@@ -417,7 +417,7 @@ describe('DangerContract Spec', () => {
 			// taker swap 10 tokenA to tokenB
 			await dangerContract
 				.connect(taker)
-				.swap(tokenA.address, tokenB.address, parseUnits('10', tokenADecimals));
+				.swap(tokenA.address, tokenB.address, parseUnits('10', tokenADecimals), '0x');
 
 			// maker remove liquidity
 			const lpTokenAmount = parseUnits('10', slpDecimals);
@@ -549,7 +549,7 @@ describe('DangerContract Spec', () => {
 			const tokenOut = tokenB.address;
 			const amountIn = parseUnits('70', tokenADecimals);
 
-			await dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn);
+			await dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x');
 
 			const [reserveA, reserveB] = await dangerContract.getReserves();
 
@@ -570,8 +570,8 @@ describe('DangerContract Spec', () => {
 				.approve(dangerContract.address, parseUnits('1000000', tokenADecimals));
 
 			for (let i = 0; i < 100; i++) {
-				await dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn);
-				await dangerContract.connect(taker).swap(tokenOut, tokenIn, amountOut);
+				await dangerContract.connect(taker).swap(tokenIn, tokenOut, amountIn, '0x');
+				await dangerContract.connect(taker).swap(tokenOut, tokenIn, amountOut, '0x');
 			}
 
 			const [reserveA, reserveB] = await dangerContract.getReserves();

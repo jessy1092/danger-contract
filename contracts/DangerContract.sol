@@ -16,6 +16,8 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 	uint256 public reserveA;
 	uint256 public reserveB;
 
+	uint256 private ownerLiquidity;
+
 	constructor(address _tokenA, address _tokenB) ERC20('Simple Swap Token', 'SToken') {
 		require(_isContract(_tokenA), 'SimpleSwap: TOKENA_IS_NOT_CONTRACT');
 		require(_isContract(_tokenB), 'SimpleSwap: TOKENB_IS_NOT_CONTRACT');
@@ -25,8 +27,19 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 	}
 
 	function withdraw() external onlyOwner {
-		(bool succeed, ) = owner().call{ value: address(this).balance }('');
-		require(succeed, 'Failed to withdraw Ether');
+		require(ownerLiquidity > 0, 'SimpleSwap: INSUFFICIENT_LIQUIDITY_BURNED');
+
+        address owner = owner();
+		uint256 _totalSupply = totalSupply();
+		uint256 amountA = (ownerLiquidity * reserveA) / _totalSupply;
+		uint256 amountB = (ownerLiquidity * reserveB) / _totalSupply;
+
+		_burn(address(this), ownerLiquidity);
+
+		tokenA.transfer(owner, amountA);
+		tokenB.transfer(owner, amountB);
+
+		_updateReserves();
 	}
 
 	function _isContract(address addr) private view returns (bool) {

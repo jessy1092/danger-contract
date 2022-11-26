@@ -5,38 +5,6 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@app-block/week8@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@app-block/week8@workspace:."
-  dependencies:
-    "@ethersproject/abi": ^5.7.0
-    "@ethersproject/providers": ^5.7.0
-    "@nomicfoundation/hardhat-chai-matchers": ^1.0.3
-    "@nomicfoundation/hardhat-network-helpers": ^1.0.4
-    "@nomicfoundation/hardhat-toolbox": ^1.0.2
-    "@nomiclabs/hardhat-ethers": ^2.1.1
-    "@nomiclabs/hardhat-etherscan": ^3.1.0
-    "@openzeppelin/contracts": ^4.8.0
-    "@remix-project/remixd": ^0.6.5
-    "@typechain/ethers-v5": ^10.1.0
-    "@typechain/hardhat": ^6.1.2
-    "@typechain/web3-v1": ^6.0.1
-    "@types/chai": ^4.3.3
-    "@types/mocha": ^9.1.1
-    "@types/node": ^18.7.13
-    chai: ^4.3.6
-    dotenv: ^16.0.1
-    ethers: ^5.7.0
-    hardhat: ^2.10.2
-    hardhat-gas-reporter: ^1.0.8
-    prettier-plugin-solidity: ^1.0.0-beta.24
-    solidity-coverage: ^0.7.21
-    ts-node: ^10.9.1
-    typechain: ^8.1.0
-    typescript: ^4.8.2
-  languageName: unknown
-  linkType: soft
-
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -3062,6 +3030,38 @@ __metadata:
   checksum: 49ca0639c7b822db670de93d4fbce44b4aa072cd848c76292c9978a8cd0fff1028763020ff4b0f147bd77bfe29b4c7f82e0f71ade76b2a06100543cdfd948d19
   languageName: node
   linkType: hard
+
+"danger-contract@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "danger-contract@workspace:."
+  dependencies:
+    "@ethersproject/abi": ^5.7.0
+    "@ethersproject/providers": ^5.7.0
+    "@nomicfoundation/hardhat-chai-matchers": ^1.0.3
+    "@nomicfoundation/hardhat-network-helpers": ^1.0.4
+    "@nomicfoundation/hardhat-toolbox": ^1.0.2
+    "@nomiclabs/hardhat-ethers": ^2.1.1
+    "@nomiclabs/hardhat-etherscan": ^3.1.0
+    "@openzeppelin/contracts": ^4.8.0
+    "@remix-project/remixd": ^0.6.5
+    "@typechain/ethers-v5": ^10.1.0
+    "@typechain/hardhat": ^6.1.2
+    "@typechain/web3-v1": ^6.0.1
+    "@types/chai": ^4.3.3
+    "@types/mocha": ^9.1.1
+    "@types/node": ^18.7.13
+    chai: ^4.3.6
+    dotenv: ^16.0.1
+    ethers: ^5.7.0
+    hardhat: ^2.10.2
+    hardhat-gas-reporter: ^1.0.8
+    prettier-plugin-solidity: ^1.0.0-beta.24
+    solidity-coverage: ^0.7.21
+    ts-node: ^10.9.1
+    typechain: ^8.1.0
+    typescript: ^4.8.2
+  languageName: unknown
+  linkType: soft
 
 "dashdash@npm:^1.12.0":
   version: 1.14.1

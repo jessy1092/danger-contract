@@ -2,13 +2,14 @@
 pragma solidity ^0.8.17;
 
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
+import { ReentrancyGuard } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import { ERC20 } from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { Math } from '@openzeppelin/contracts/utils/math/Math.sol';
 
 import { ISimpleSwap } from './interface/ISimpleSwap.sol';
 
-contract DangerContract is ISimpleSwap, ERC20, Ownable {
+contract DangerContract is ISimpleSwap, ERC20, Ownable, ReentrancyGuard {
 	IERC20 public tokenA;
 	IERC20 public tokenB;
 	uint256 public lastK;
@@ -33,7 +34,7 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 		address tokenIn,
 		address tokenOut,
 		uint256 amountIn
-	) external returns (uint256) {
+	) external nonReentrant returns (uint256) {
 		require(
 			_isContract(tokenIn) && (address(tokenA) == tokenIn || address(tokenB) == tokenIn),
 			'SimpleSwap: INVALID_TOKEN_IN'
@@ -74,6 +75,7 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 	/// @inheritdoc ISimpleSwap
 	function addLiquidity(uint256 amountAIn, uint256 amountBIn)
 		external
+		nonReentrant
 		returns (
 			uint256,
 			uint256,
@@ -118,7 +120,7 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable {
 	}
 
 	/// @inheritdoc ISimpleSwap
-	function removeLiquidity(uint256 liquidity) public returns (uint256, uint256) {
+	function removeLiquidity(uint256 liquidity) public nonReentrant returns (uint256, uint256) {
 		require(liquidity > 0, 'SimpleSwap: INSUFFICIENT_LIQUIDITY_BURNED');
 
 		address sender = _msgSender();

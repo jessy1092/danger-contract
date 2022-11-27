@@ -7,7 +7,8 @@ import { ERC20 } from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { Math } from '@openzeppelin/contracts/utils/math/Math.sol';
 
-import { ISimpleSwap } from './interface/ISimpleSwap.sol';
+
+import { ISimpleSwap, ISimpleSwapCallee } from './interface/ISimpleSwap.sol';
 
 contract DangerContract is ISimpleSwap, ERC20, Ownable, ReentrancyGuard {
 	IERC20 public tokenA;
@@ -33,7 +34,8 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable, ReentrancyGuard {
 	function swap(
 		address tokenIn,
 		address tokenOut,
-		uint256 amountIn
+		uint256 amountIn,
+		bytes calldata data
 	) external nonReentrant returns (uint256) {
 		require(
 			_isContract(tokenIn) && (address(tokenA) == tokenIn || address(tokenB) == tokenIn),
@@ -64,7 +66,7 @@ contract DangerContract is ISimpleSwap, ERC20, Ownable, ReentrancyGuard {
 
 		IERC20(tokenIn).transferFrom(sender, address(this), amountIn);
 		IERC20(tokenOut).transfer(sender, amountOut);
-
+		if (data.length > 0) ISimpleSwapCallee(sender).simpleswapCall(sender, amountOut, data);
 		_updateReserves();
 
 		emit Swap(sender, tokenIn, tokenOut, amountIn, amountOut);
